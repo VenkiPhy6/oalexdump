@@ -21,3 +21,5 @@ services:
       - postgres
     volumes:
       - ./scripts:/usr/src/scripts
+      - ./openalex_snapshot:/usr/src/openalex_snapshot
+      - ./csv_files:/usr/src/csv_files

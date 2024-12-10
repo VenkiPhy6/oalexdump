@@ -6,7 +6,7 @@ RUN apt-get update && \
     apt-get install -y python3 python3-pip
 
 # Create a directory for Python scripts
-WORKDIR /usr/src/scripts
+WORKDIR /usr/src
 
 # Set environment variables for PostgreSQL
 ENV POSTGRES_USER=oalexer

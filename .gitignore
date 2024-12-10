@@ -1,4 +1,5 @@
 openalex_snapshot/*
 postgres_data/*
+csv_files/*
 .docker/*
 docker-compose.override.yml

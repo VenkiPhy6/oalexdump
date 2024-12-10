@@ -1,5 +1,4 @@
 import psycopg2
-import pandas as pd
 
 # Connect to the PostgreSQL database inside the Docker container
 conn = psycopg2.connect(
@@ -13,7 +12,7 @@ conn = psycopg2.connect(
 cursor = conn.cursor()
 
 # Open the SQL file and read the content
-sql_file_path = './openalex-pg-schema.sql'
+sql_file_path = './scripts/openalex-pg-schema.sql'
 with open(sql_file_path, 'r') as file:
     sql = file.read()
 
