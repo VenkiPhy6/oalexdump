@@ -4,39 +4,37 @@ Dec 10, 2024
 
 This project dumps all of the [OpenAlex](https://openalex.org/) database into a containerized Postgresql environment. As of this writing, this is going to be a one-time setup and NOT a live ETL pipeline.
 
-Required software:
+## Required hardware
+
+Please be aware of the space constraints here. You will need at least 2TB. As of the day of this writing, you will require 453GB to download the snapshot data, 213 GB to store the flattened csv files, and ~1.5 TB to store the Postgre database.
+
+## Required software
 Before you can clone this repo and run the code you need to:
 
 1. install Docker in your machine. You can get the respective downloader for your OS from the [Docker website](https://www.docker.com/products/docker-desktop/). Note that you do NOT have to get the paid version of Docker for this project.
 2. install the AWS Command Line Interface, `awscli`. Installer can be found on [AWS website](https://aws.amazon.com/cli/).
 	- You do NOT need an AWS account for this!
 
-Here are the steps you need to follow to get the OpenAlex database using this repository:
+## Steps to use this repository
 1. Clone this repository into your local machine at a location of your choice.
-	- Hope you are aware of the space constraints here. As of the day of this writing, you will require 453GB to download the snapshot data (step 5). Then another 213 GB to store the flattened csv files. Then another TB or so to store the Postgre database. I used a 4TB hard drive to do all this.
-2. In your local version of the repository, create 3 directories: 
-	- `openalex_snapshot`
-	- `postgres_data`
-	- `csv_files`
-3. Open a terminal, `cd` into the repository. All the other commands must be run in such a terminal.
-4. In the terminal from step 3, run `aws s3 sync "s3://openalex" "./openalex_snapshot" --no-sign-request`. This will take a while to download based on your internet speed. Wait for it to finish.
-5. In the terminal from step 3, run `docker-compose build`
-	- If you get a git commit related warning, you can ignore it.
- 	- This command uses the configuration specified in `Dockerfile` and the `docker-compose.yml` to install the latest postgre image from Docker with a specific username, password and database name. It then also installs Python 3 inside this Postgre image. The data you will put into the Postgre database is persisted by binding it to the `postgres_data` folder you created in step 2. You can open a terminal into the container and run all the python scripts in the `scripts` of this repository and access the files in the `openalex_snapshot` and `csv_files` folders from step 2.
-6. In the terminal from previous step, run `docker-compose up -d`. 
+2. Open a terminal, `cd` into the repository. All the other commands must be run in such a terminal.
+3. In the terminal from previous step, run `aws s3 sync "s3://openalex" "./openalex_snapshot" --no-sign-request`. This will take a while to download based on your internet speed. Wait for it to finish.
+4. In the terminal from previous step, run `docker-compose build`
+	- This command uses the configuration specified in `Dockerfile` and the `docker-compose.yml` to install the latest postgre image from Docker with a specific username, password and database name. It then also installs Python 3 inside this Postgre image. The data you will put into the Postgre database is persisted by binding it to the `postgres_data` folder. You can open a terminal into the container and run all the python scripts in the `scripts` of this repository and access the files in the `openalex_snapshot` and `csv_files` folders.
+5. In the terminal from previous step, run `docker-compose up -d`. 
 	- Now two Docker containers should be up and running. One is the PostgreSQL container (called `postgres-python-container`) and another is the Python container (called `python-scripts-container`) with the necessary packages installed.
-8. In the terminal from the previous step, run `docker exec -it python-scripts-container /bin/bash`
+6. In the terminal from the previous step, run `docker exec -it python-scripts-container /bin/bash`
 	- This creates an interactive terminal to the Python container.
  	- If you are running into errors in this step, you may want to make sure that the Docker containers are running. Run `docker ps` and see if the two containers are up and running. If not, see previous step.
-9. In the Docker terminal from previous step, run `psql -h postgres -d openalex -U oalexer` and type the passwrod specified in the Dockerfile (by default it is: alexandria).
-10. In the Docker terminal from previous step, run `\i scripts/00_openalex-pg-schema.sql`
+7. In the Docker terminal from previous step, run `psql -h postgres -d openalex -U oalexer` and type the passwrod specified in the Dockerfile (by default it is: alexandria).
+8. In the Docker terminal from previous step, run `\i scripts/00_openalex-pg-schema.sql`
 	- This script will create a set of tables that matches the schema [shown in the docs](https://docs.openalex.org/download-all-data/upload-to-your-database/load-to-a-relational-database/postgres-schema-diagram).
 	- Please read step 1 of the [documentation from OpenAlex](https://docs.openalex.org/download-all-data/upload-to-your-database/load-to-a-relational-database#step-1-create-the-schema).
-12. In the Docker terminal from previous step, run `python3 ./scripts/01_flatten-openalex-jsonl.py`
+9. In the Docker terminal from previous step, run `python3 ./scripts/01_flatten-openalex-jsonl.py`
 	- This script will take the json files from `openalex_snapshot` folder, turn it into compressed csv files, and put them in the `csv_files` folder.
  	- This take quite a while to run. So be patient. If you are in a hurry, you may want to parallelize the script or simply split the script into multiple parts and run them all simultaneously.
  	- Please read step 2 of the [documentation from OpenAlex](https://docs.openalex.org/download-all-data/upload-to-your-database/load-to-a-relational-database#step-2-convert-the-json-lines-files-to-csv)
-13. In the Docker terminal from the previous step, run `\i scripts/02_copy-openalex-csv.sql`
+10. In the Docker terminal from the previous step, run `\i scripts/02_copy-openalex-csv.sql`
 	- Please read step 3 of the [documentation from OpenAlex](https://docs.openalex.org/download-all-data/upload-to-your-database/load-to-a-relational-database#step-3-load-the-csv-files-to-the-database)
  	- For me this was by far the most time consuming step! It all depends on the read/write speeds of your HDD/SSD. If you are in a hurry, I'd recommend prioritizing the tables you are most interested in by editing the `02_copy-openalex-csv.sql` script to put the priority tables up top. That way, as soon as your top tables are done, you can do some analysis while the rest of the tables continue to load.
 
@@ -58,3 +56,4 @@ I followed the OpenAlex documentation. Specifically, the ['Download to your mach
 	2. I did `docker-compose build` and `docker-compose up -d` 
 10. I then ran the rest of the scripts provided in the ['Load to your relational database' guide](https://docs.openalex.org/download-all-data/upload-to-your-database/load-to-a-relational-database) within the Docker container.
 	- I tried creating one Python script to orchestrate all the scripts at once but gave up after running into trouble with the copy commands! If you're mood, please do it and give me a pull request.
+ 	- At the end, I skipped loading some of the tables into the database since it was taking too long and I didn't see the need to have that data.
