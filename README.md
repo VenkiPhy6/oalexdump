@@ -40,6 +40,7 @@ Before you can clone this repo and run the code you need to:
 
 You are done! As an optional step, create more indices as you see fit to speed up your specific query. 
 
+## Note to self
 As a note-to-self, I also write down the steps I followed in creating this repository:
 I followed the OpenAlex documentation. Specifically, the ['Download to your machine' guide](https://docs.openalex.org/download-all-data/download-to-your-machine) first and then the ['Load to your relational database' guide](https://docs.openalex.org/download-all-data/upload-to-your-database/load-to-a-relational-database).
 
