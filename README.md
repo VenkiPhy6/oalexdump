@@ -6,7 +6,7 @@ This project dumps all of the [OpenAlex](https://openalex.org/) database into a 
 
 ## Required hardware
 
-Please be aware of the space constraints here. You will need at least 2TB. As of the day of this writing, you will require 453GB to download the snapshot data, 213 GB to store the flattened csv files, and ~1.5 TB to store the Postgre database. You will also need a decent RAM (I recommend 16GB) for flattening the JSON files to csv files in memory. Optionally, you may need a multicore processor if you want to speed things up by parallelizing the scripts.
+Please be aware of the space constraints here. I'd recommned a minimum of 2-3TB. As of the day of this writing, you will require 453GB to download the snapshot data, 213 GB to store the flattened csv files, and ~1.5 TB to store the Postgre database. You will also need a decent RAM (I recommend 16GB) for flattening the JSON files to csv files in memory. Optionally, you may need a multicore processor if you want to speed things up by parallelizing the scripts.
 
 ## Required software
 Before you can clone this repo and run the code you need to:
