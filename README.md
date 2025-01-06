@@ -24,8 +24,12 @@ Here are the steps you need to follow to get the OpenAlex database using this re
 6. In the terminal from step 3, run `docker-compose build`
 	- If you get a git commit related warning, please ignore.
 7. In the terminal from step 3, run `docker-compose up -d`. 
-	- Now two Docker containers should be up and running. On contains the PostgreSQL instance and another contains the Python with the necessary packages installed.
-8. 
+	- Now two Docker containers should be up and running. One is the PostgreSQL container and another is the Python container with the necessary packages installed.
+8. You now need to create an interactive terminal to the Python container. Run `docker exec -it python-scripts-container /bin/bash`
+	- You may want to make sure the Docker containers are running. Run `docker ps` and see if the two containers are up and running. If not, see step 7.
+9. In the terminal from step 8, run `python3 ./scripts/00_setupdb.py`	
+10. If step 9 is successful, in the same terminal, run `python3 ./scripts/flatten-openalex-jsonl.py`
+	- Now wait - for a long time!	
 
 
 Here are the steps I followed in creating this repository:

@@ -7,8 +7,8 @@ import os
 SNAPSHOT_DIR = './openalex_snapshot'
 CSV_DIR = './csv_files'
 
-if not os.path.exists(CSV_DIR):
-    os.mkdir(CSV_DIR)
+# if not os.path.exists(CSV_DIR):
+#    os.mkdir(CSV_DIR)
 
 FILES_PER_ENTITY = int(os.environ.get('OPENALEX_DEMO_FILES_PER_ENTITY', '0'))
 
