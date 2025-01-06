@@ -30,16 +30,19 @@ Here are the steps you need to follow to get the OpenAlex database using this re
  	- If you are running into errors in this step, you may want to make sure that the Docker containers are running. Run `docker ps` and see if the two containers are up and running. If not, see previous step.
 9. In the Docker terminal from previous step, run `psql -h postgres -d openalex -U oalexer` and type the passwrod specified in the Dockerfile (by default it is: alexandria).
 10. In the Docker terminal from previous step, run `\i scripts/00_openalex-pg-schema.sql`
+	- This script will create a set of tables that matches the schema [shown in the docs](https://docs.openalex.org/download-all-data/upload-to-your-database/load-to-a-relational-database/postgres-schema-diagram).
 	- Please read step 1 of the [documentation from OpenAlex](https://docs.openalex.org/download-all-data/upload-to-your-database/load-to-a-relational-database#step-1-create-the-schema).
 12. In the Docker terminal from previous step, run `python3 ./scripts/01_flatten-openalex-jsonl.py`
 	- This script will take the json files from `openalex_snapshot` folder, turn it into compressed csv files, and put them in the `csv_files` folder.
+ 	- This take quite a while to run. So be patient. If you are in a hurry, you may want to parallelize the script or simply split the script into multiple parts and run them all simultaneously.
  	- Please read step 2 of the [documentation from OpenAlex](https://docs.openalex.org/download-all-data/upload-to-your-database/load-to-a-relational-database#step-2-convert-the-json-lines-files-to-csv)
-  	- Now wait - for a long time! If you are in a hurry, you may want to parallelize the script (which I haven't done!)
-13. In the Docker terminal from previous step, run `\i scripts/02_copy-openalex-csv.sql`
+13. In the Docker terminal from the previous step, run `\i scripts/02_copy-openalex-csv.sql`
 	- Please read step 3 of the [documentation from OpenAlex](https://docs.openalex.org/download-all-data/upload-to-your-database/load-to-a-relational-database#step-3-load-the-csv-files-to-the-database)
- 	- For me this was by far the most time consuming process! It all depends on the read/write speeds of your HDD/SSD. If you are in a hurry, I'd recommend prioritizing the tables you are most interested in by editing the `02_copy-openalex-csv.sql` script by putting them first. That way, you can potentially do some analysis while the rest of the tables continue to load.
+ 	- For me this was by far the most time consuming step! It all depends on the read/write speeds of your HDD/SSD. If you are in a hurry, I'd recommend prioritizing the tables you are most interested in by editing the `02_copy-openalex-csv.sql` script to put the priority tables up top. That way, as soon as your top tables are done, you can do some analysis while the rest of the tables continue to load.
 
-Here are the steps I followed in creating this repository:
+You are done! As an optional step, create more indices as you see fit to speed up your specific query. 
+
+As a note-to-self, I also write down the steps I followed in creating this repository:
 I followed the OpenAlex documentation. Specifically, the ['Download to your machine' guide](https://docs.openalex.org/download-all-data/download-to-your-machine) first and then the ['Load to your relational database' guide](https://docs.openalex.org/download-all-data/upload-to-your-database/load-to-a-relational-database).
 
 1. I created this repository and cloned it to a local directory. Everything that follows was done with a terminal in that local directory (So `cd` to the directory). 
@@ -54,3 +57,4 @@ I followed the OpenAlex documentation. Specifically, the ['Download to your mach
 	1. I wrote up a Dockerfile and a docker-compose.yml. You can read them to understand the config.
 	2. I did `docker-compose build` and `docker-compose up -d` 
 10. I then ran the rest of the scripts provided in the ['Load to your relational database' guide](https://docs.openalex.org/download-all-data/upload-to-your-database/load-to-a-relational-database) within the Docker container.
+	- I tried creating one Python script to orchestrate all the scripts at once but gave up after running into trouble with the copy commands! If you're mood, please do it and give me a pull request.
