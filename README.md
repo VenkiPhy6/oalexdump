@@ -2,6 +2,24 @@
 
 Dec 10, 2024
 
+---------------------
+
+## Update
+
+Aug 14, 2025
+
+This is a long overdue update that I failed to post earlier because I forgot this repository altogether! Here goes: While I created this repo and can confirm the docker runs and the data loads into PostGre, after a week of using PostGre I abandoned it. It is far too slow. My use-case here requires a single user-mostly reads-sometimes writes. For this purpose a database solve like [DuckDB](https://duckdb.org/) is miles better than a PostGre solution. In fact, even if you had a multi-user use case, I don't know that there is a good PostGre solve for this dataset given its size. When I started this project I fully underestimated how slow it will be, espcially given the weak CPU I had in my machine.
+
+If you are still adamant about PostGre, then the scripts work and you can use it as is. But if you are not I would suggest the following steps:
+
+1. Follow until step 9 in the `Steps to use this repository` section below.
+2. Then get into the Python environemnt of the Docker container and do `pip install duckdb`. Now you can use the `read_csv_auto` command in Duckdb's SQL flavor to directly read the .csv flat files you would have at your disposal.
+
+This of course only solves for a single user-mostly reads-sometimes writes usecase. If you have a multi-user use case, you must consider other solutions.
+
+---------------------
+
+
 This project dumps all of the [OpenAlex](https://openalex.org/) database into a containerized Postgresql environment. As of this writing, this is going to be a one-time setup and NOT a live ETL pipeline.
 
 ## Required hardware
