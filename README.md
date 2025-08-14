@@ -1,6 +1,6 @@
 # oalexdump
 
-Dec 10, 2024
+This project dumps all of the [OpenAlex](https://openalex.org/) database into a containerized Postgresql environment. As of this writing, this is going to be a one-time setup and NOT a live ETL pipeline.
 
 ---------------------
 
@@ -19,8 +19,7 @@ This of course only solves for a single user-mostly reads-sometimes writes useca
 
 ---------------------
 
-
-This project dumps all of the [OpenAlex](https://openalex.org/) database into a containerized Postgresql environment. As of this writing, this is going to be a one-time setup and NOT a live ETL pipeline.
+Dec 10, 2024
 
 ## Required hardware
 
